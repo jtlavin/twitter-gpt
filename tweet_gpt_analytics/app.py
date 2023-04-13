@@ -1,6 +1,6 @@
-# Package to load your environment variables when deploying locally
-# from dotenv import load_dotenv
-# load_dotenv()
+#Package to load your environment variables when deploying locally
+from dotenv import load_dotenv
+load_dotenv()
 import os
 import datetime
 
@@ -24,16 +24,6 @@ def get_db_connection() -> psycopg2.extensions.connection:
                             connect_timeout=1)
     return conn
 
-
-
-
-
-# El decorador @st.cache(suppress_st_warning=True) se utiliza para "almacenar en caché" 
-# los resultados de la función para evitar que se ejecuten consultas de base de datos innecesarias 
-# cada vez que se cargue la aplicación web. El caché de Streamlit evita que la función se ejecute 
-# si se llama con los mismos argumentos que antes y en su lugar devuelve los resultados almacenados en caché. 
-# El argumento suppress_st_warning=True suprime cualquier advertencia que pueda producirse al usar el caché.
-
 @st.cache(suppress_st_warning=True)
 def get_data(start_date: str = '2020-01-01',
              end_date: str = '2025-01-01') -> pd.DataFrame:
@@ -52,13 +42,12 @@ def get_data(start_date: str = '2020-01-01',
                         Adjust starting date or ending date to refresh data""")
     return df
 
-print('If this is printed and the app is not running on the public IP, check port mappings and security group inbound rules')
 if __name__ == "__main__":
 
     # here we define the layout of the sidebar
     st.title('Tweet GPT analytics dashboard')
     # here we run the main 'functionality' of the app
-    start_date = st.sidebar.text_input("Starting date", "2021-01-01")
+    start_date = st.sidebar.text_input("Starting date", "2023-01-01")
     end_date = st.sidebar.text_input("End date", "2024-01-01")
     df = get_data(start_date=start_date, end_date=end_date)
     # error handling message
@@ -100,18 +89,3 @@ if __name__ == "__main__":
 
     # display the word cloud
     st.image(wc.to_array())
-
-    # col1, col2, col3 = st.columns(3)
-    # if view_name == 'View tweets':
-    #     # view tweets View
-    #     display_table(df)
-
-    # else:
-    #      # Analytics view
-    #     # plot sentiment over time
-    #     st.markdown(f"**Sentiment score over time**")
-    #     keyword_info = f"keyword={keyword}" if keyword else ""
-    #     st.markdown(f"{keyword_info} start date={start_date} \n end date={end_date}")
-    #     # make sure timestamp index is seen on the plot
-    #     df = df.set_index('timestamp')
-    #     st.line_chart(df['sentiment_score'])

@@ -7,33 +7,34 @@ tweets from chilean politicians via Lambda Function and storing them in a RDS.
 + TODO
 
 ## Local setup
-Not necessary but if we students want to run code locally it would be better to create a virtual environment with `conda` and install the following
+If you would like to run such project locally, then install `conda` and do the following after:
 
-If you are on windows 
-- install anaconda3 at https://www.anaconda.com/products/individual
-- start the Anaconda3 power shell
-- set the environment variables:
-```
-[Environment]::SetEnvironmentVariable("TWITTER_API_KEY", "Your-api-key", "User")
-[Environment]::SetEnvironmentVariable("TWITTER_API_SECRET", "Your-secret-key", "User")
-[Environment]::SetEnvironmentVariable("S3_BUCKET_NAME", "my-tweet-analytics-storage", "User")
-[Environment]::SetEnvironmentVariable("DB_PASSWORD", "password", "User")
-[Environment]::SetEnvironmentVariable("DB_HOST", "your-RDS-endpoint", "User")
-```
- 
+1. Navigate to or make a directory for your proyect where you will create your virtual environment
 ```sh
 conda create --name tweet_analytics_py38 python=3.8 spyder
 conda activate tweet_analytics_py38
 conda install -c conda-forge poetry # dependency management
-conda install -c conda-forge notebook # for jupyter
+conda install -c conda-forge dotenv # to manage environment variables
 ```
 
-to install the project dependencies run
+2. Install the project dependencies with poetry
 ```sh
 poetry install
 ```
 
-After the tutorial and setting `environmental variables`, you can run locally the dashboard with
+3. Setup a .env file with environment variables. This only makes sense if you use the same architecture
 ```
-poetry run streamlit run src/app.py
+DB_HOST = 'XXXX'
+DB_PASSWORD = 'XXXX'
+IAM_AWS_ACCESS_KEY = 'XXXX'
+IAM_AWS_SECRET_ACCESS_KEY = 'XXXX'
+OPENAI_API_KEY = 'XXXX'
+TWITTER_API_KEY = 'XXXX'
+TWITTER_API_SECRET = 'XXXX'
+TWITTER_BUCKET = 'XXXX' 
+```
+
+Finally to run the dashboard locally
+```
+poetry run streamlit run tweet_gpt_analytics/app.py
 ```
