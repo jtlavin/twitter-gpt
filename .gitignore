@@ -1,0 +1,19 @@
+.env
+
+# OS generated files #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+*.DS_Store
+
+# ide related
+.envrc
+.spyproject/
+# pycache
+__pycache__/
+# lambda layer
+*.zip 
+
+README.md

@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "tweet_gpt_analytics"
+version = "0.1.0"
+description = ""
+authors = ["jose-tomas-lavin <jlavinleon@alumni.unav.es>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+twython = "^3.9.1"
+atomicwrites = "^1.4.0"
+boto3 = "^1.18.53"
+streamlit = "^1.10.0"
+nltk = "^3.6.4"
+awscli = "^1.20.53"
+psycopg2-binary = "^2.9.1"
+openai = "^0.27.2"
+wordcloud = "^1.8.2.2"
+protobuf = "3.20.1"
+
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
