@@ -153,9 +153,6 @@ def ask_gpt(context, question, tweet, MODEL):
 
 def lambda_handler(event, context):
     try:
-    # # wrap the body into a try/catch to avoid lambda automatically re-trying
-    
-    #S3_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
         python_tweets = Twython(os.environ['TWITTER_API_KEY'],
                             os.environ['TWITTER_API_SECRET'])
         persons = ['LavinJoaquin', 'gabrielboric', 'rodolfocarter', 'joseantoniokast', 'AXELKAISER', 'PamJiles', 'Orrego', 'carreragonzalo', 'Diego_Schalper' ,'GiorgioJackson', 'izkia'
@@ -164,7 +161,6 @@ def lambda_handler(event, context):
         for p in persons:
             query = {'screen_name': p}
             tweets = python_tweets.get_user_timeline(**query)
-            # only take recent tweets
             recent_tweets = [tweet for tweet in tweets
                             if is_recent(tweet)]   
             for tweet in recent_tweets:
@@ -178,7 +174,6 @@ def lambda_handler(event, context):
                     # Agregar los tweets limpios a la lista
                     clean_timeline.append(tweet)
     
-        # format tweets
         clean_timeline = [extract_fields(tweet) for tweet in clean_timeline]
     
         context_gpt = {}
@@ -212,9 +207,7 @@ def lambda_handler(event, context):
         conn = get_db_connection()
         insert_data_in_db(df=tweets_df, conn=conn, table_name='tweets_analytics')
     except Exception as e:
-        logging.exception('Exception occured \n')
-    # add_messages_to_db(df=tweets_df, conn=conn)
-    
+        logging.exception('Exception occured \n')    
     print('Lambda executed succesfully!')
 
 if __name__ == "__main__":
