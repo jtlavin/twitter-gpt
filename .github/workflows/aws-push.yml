@@ -31,7 +31,7 @@ on:
     branches: [ "master" ]
 
 env:
-  AWS_REGION: eu-central-1'                  # set this to your preferred AWS region, e.g. us-west-1
+  AWS_REGION: eu-central-1                  # set this to your preferred AWS region, e.g. us-west-1
   ECR_REPOSITORY: tweet_gpt_analytics           # set this to your Amazon ECR repository name
   ECS_SERVICE: fargate                 # set this to your Amazon ECS service name
   ECS_CLUSTER: fargate-cluster                 # set this to your Amazon ECS cluster name
