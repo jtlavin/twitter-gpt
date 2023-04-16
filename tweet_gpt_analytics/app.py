@@ -1,9 +1,8 @@
 #Package to load your environment variables when deploying locally
-from dotenv import load_dotenv
-load_dotenv()
+# from dotenv import load_dotenv
+# load_dotenv()
 import os
 import datetime
-
 import numpy as np
 import pandas as pd
 import streamlit as st

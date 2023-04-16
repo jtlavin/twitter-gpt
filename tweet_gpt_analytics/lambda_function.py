@@ -19,11 +19,11 @@ openai.api_key = os.environ['OPENAI_API_KEY']
 def get_db_connection() -> psycopg2.extensions.connection:
     # to connect to DB, use the parameters and password that define it
     conn = psycopg2.connect(
-                            user="postgres",
-                            password=os.environ['DB_PASSWORD'], #password
-                            host=os.environ['DB_HOST'], #twitter.cblavhksmkyd.eu-central-1.rds.amazonaws.com
-                            port="5432",
-                            connect_timeout=1)
+        user="postgres",
+        password=os.environ['DB_PASSWORD'], #password
+        host=os.environ['DB_HOST'], #twitter.cblavhksmkyd.eu-central-1.rds.amazonaws.com
+        port="5432",
+        connect_timeout=1)
     return conn
 
 def _time_parser(twitter_time: str) -> datetime:
@@ -104,7 +104,8 @@ def insert_data_in_db(df: pd.DataFrame,
     if are_data and conn is not None:
         try:
             cur = conn.cursor()
-            # to perform a batch insert we need to reshape the data in 2 strings with the column names and their values
+            # For a batch insert we need to reshape the data 
+            # in 2 strings with the column names and their values
             df_columns = list(df.columns)
             columns = ",".join(df_columns)
 
@@ -138,7 +139,7 @@ def insert_data_in_db(df: pd.DataFrame,
         raise ValueError('Connection to DB must be alive!')
     elif len(df) == 0:
         raise ValueError('df has 0 rows!')
-    
+
 def ask_gpt(context, question, tweet, MODEL):
     response = openai.ChatCompletion.create(
             model=MODEL,
@@ -153,18 +154,15 @@ def ask_gpt(context, question, tweet, MODEL):
 
 def lambda_handler(event, context):
     try:
-    # # wrap the body into a try/catch to avoid lambda automatically re-trying
-    
-    #S3_BUCKET_NAME = os.environ['S3_BUCKET_NAME']
         python_tweets = Twython(os.environ['TWITTER_API_KEY'],
                             os.environ['TWITTER_API_SECRET'])
-        persons = ['LavinJoaquin', 'gabrielboric', 'rodolfocarter', 'joseantoniokast', 'AXELKAISER', 'PamJiles', 'Orrego', 'carreragonzalo', 'Diego_Schalper' ,'GiorgioJackson', 'izkia'
+        persons = ['LavinJoaquin', 'gabrielboric', 'rodolfocarter', 'joseantoniokast', 'AXELKAISER', 'PamJiles'
+                'Orrego', 'carreragonzalo', 'Diego_Schalper' ,'GiorgioJackson', 'izkia'
                 , 'Carolina_Toha', 'guidogirardi', 'Jou_Kaiser', 'MaiteOrsini', 'GmoRamirez', 'gonzalowinter']
         clean_timeline = []
         for p in persons:
             query = {'screen_name': p}
             tweets = python_tweets.get_user_timeline(**query)
-            # only take recent tweets
             recent_tweets = [tweet for tweet in tweets
                             if is_recent(tweet)]   
             for tweet in recent_tweets:
@@ -175,15 +173,11 @@ def lambda_handler(event, context):
                         tweet['text'] = re.sub(r"http\S+", "", tweet['text'])
                     else:
                         continue
-                    # Agregar los tweets limpios a la lista
                     clean_timeline.append(tweet)
     
-        # format tweets
         clean_timeline = [extract_fields(tweet) for tweet in clean_timeline]
-    
         context_gpt = {}
         question = {}
-    
         question['summary'] = 'Me puedes decir cual es el tema central del siguiente tweet? responde en no mas de 3 palabras'
         question['intention'] = 'Crees que el siguiente tweet tiene una intención constructiva, destructiva o neutral? Tu respuesta debe ser una sola palabra'
         context_gpt['summary'] = 'Imagina que eres un experto en descubrir palabras clave y resumiendo contenido'
@@ -212,9 +206,7 @@ def lambda_handler(event, context):
         conn = get_db_connection()
         insert_data_in_db(df=tweets_df, conn=conn, table_name='tweets_analytics')
     except Exception as e:
-        logging.exception('Exception occured \n')
-    # add_messages_to_db(df=tweets_df, conn=conn)
-    
+        logging.exception('Exception occured \n')    
     print('Lambda executed succesfully!')
 
 if __name__ == "__main__":
