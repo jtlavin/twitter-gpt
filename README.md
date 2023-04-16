@@ -1,4 +1,4 @@
-# Twitter GPT analytics
+# :bird: Twitter GPT analytics
 In this repository I've developed a Python app in Streamlit and deployed it with Docker on AWS. It takes
 information from the Twitter API and uses gpt-3.5 to make analysis regarding keywords for every tweet and a summary. Currently it's extracting
 tweets from chilean politicians via Lambda Function and storing them in a RDS.
