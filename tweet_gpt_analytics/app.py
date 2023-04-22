@@ -1,11 +1,12 @@
 #Package to load your environment variables when deploying locally
-# from dotenv import load_dotenv
-# load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 import os
 import datetime
 import numpy as np
 import pandas as pd
 import streamlit as st
+import matplotlib.pyplot as plt
 from wordcloud import WordCloud
 import nltk
 from nltk.corpus import stopwords
@@ -29,8 +30,16 @@ def get_data(start_date: str = '2020-01-01',
 
     conn = get_db_connection()
     # query the database with start and end data
-    sql = f"""select * from tweets_analytics
-              where timestamp between date('{start_date}') and date('{end_date}')
+    sql = f"""select 
+                    author
+                    , timestamp
+                    , text
+                    , gpt_summary
+                    , replace(lower(gpt_intention), '.', '') as gpt_intention
+                from tweets_analytics
+                where timestamp between date('{start_date}') and date('{end_date}')
+                and replace(lower(gpt_intention), '.', '') in ('constructiva', 'neutral', 'destructiva')
+                order by timestamp desc
               """
     print(sql)
     df = pd.read_sql_query(sql, conn)
@@ -38,8 +47,14 @@ def get_data(start_date: str = '2020-01-01',
     now = str(datetime.datetime.now())[:-7]
     st.sidebar.markdown(f"""**Latest update data :**
                             {now}
-                        Adjust starting date or ending date to refresh data""")
+                        Adjust starting date or ending date to refresh data.
+                        Data is available from January 16, 2023""")
     return df
+
+@st.cache
+def convert_df(df):
+    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+    return df.to_csv().encode('utf-8')
 
 if __name__ == "__main__":
 
@@ -58,7 +73,7 @@ if __name__ == "__main__":
                         **Tweets for a given list of authors are being extracted constantly to feed a Database.
                         Then the tweets are being analyzed by gpt-3.5turbo in terms of sentiment
                         and summary of the text. You can adjust the query with the date parametres
-                        and select the desired author.***
+                        and select the desired author.**
                          ''')
     
     # get the set of values from the 'author' column
@@ -68,23 +83,39 @@ if __name__ == "__main__":
     selected_option = st.sidebar.selectbox('Select an author:', author_options, index=0)
 
     df['timestamp'] = pd.to_datetime(df['timestamp'])
-    st.dataframe(df)
-
-
     df_filtered = df[df.author == selected_option]
     # count the number of tweets per day
     tweet_count = df_filtered[['text', 'timestamp']].groupby(pd.Grouper(key='timestamp', freq='D')).count()
-    # display the chart
-    st.line_chart(tweet_count)
 
-    tweets = ' '.join(df_filtered['text'])
+    col1, col2 = st.columns(2)
+
+    col1.subheader(f"¿Cuantas veces tweetea al día {selected_option}?")
+    col1.line_chart(tweet_count)
+
+    col2.subheader(f"Mira los tweets, hay {df_filtered.shape[0]}")
+    csv = convert_df(df_filtered[['author', 'timestamp', 'text']])
+
+    col2.download_button(
+        label="Download data as CSV",
+        data=csv,
+        file_name=f'tweets_{selected_option}_{start_date}_{end_date}.csv',
+        mime='text/csv',
+    )
+    col2.dataframe(df_filtered[['author', 'timestamp', 'text']])
+
+    tweets = ' '.join(df_filtered['gpt_summary'])
     stop_words = set(stopwords.words('spanish'))
     words = tweets.split()
     filtered_words = [word for word in words if word.lower() not in stop_words]
     filtered_tweets = ' '.join(filtered_words)
 
-    # create the word cloud
+    st.subheader('Temáticas de los tweets segun GPT')
+    st.markdown('GPT responde a : _Cuál es el tema central del siguiente tweet?_')
     wc = WordCloud(width=800, height=400).generate(filtered_tweets)
 
     # display the word cloud
     st.image(wc.to_array())
+
+    st.subheader('¿Qué intención tienen sus tweets?')
+    st.markdown('GPT responde a : _Crees que el siguiente tweet tiene una intención constructiva, destructiva o neutral?_')
+    st.bar_chart(df[df.author == selected_option]["gpt_intention"].value_counts())
