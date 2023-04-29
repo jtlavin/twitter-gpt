@@ -4,7 +4,10 @@ information from the Twitter API and uses gpt-3.5 to make analysis regarding key
 tweets from chilean politicians via Lambda Function and storing them in a RDS.
 
 ## Architecture 
-+ TODO
+![alt text](images/architecture.png)
+
+## Visualization 
+![alt text](images/viz_AdobeExpress.gif)
 
 ## Local setup
 If you would like to run such project locally, then install `conda` and do the following after:
