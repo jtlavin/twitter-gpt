@@ -7,7 +7,7 @@ tweets from chilean politicians via Lambda Function and storing them in a RDS.
 ![alt text](images/architecture.png)
 
 ## Visualization 
-![alt text](images/viz_AdobeExpress.gif)
+![alt text](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDYyYjEzZGQ1NWYzYWZjNzE0MDRlNzkwZGEwNWU0M2UyNDRiNDhiMSZlcD12MV9pbnRlcm5hbF9naWZzX2dpZklkJmN0PWc/1cm5EX4rGyFHzOggNR/giphy.gif)
 
 ## Local setup
 If you would like to run such project locally, then install `conda` and do the following after:
