@@ -17,8 +17,8 @@ def get_db_connection() -> psycopg2.extensions.connection:
     # to connect to DB, use the parameters and password that define it
     conn = psycopg2.connect(
                             user="postgres",
-                            password=os.environ['DB_PASSWORD'], #password
-                            host=os.environ['DB_HOST'], #twitter.cblavhksmkyd.eu-central-1.rds.amazonaws.com
+                            password=os.environ['DB_PASSWORD'], 
+                            host=os.environ['DB_HOST'], 
                             port="5432",
                             connect_timeout=1)
     return conn
